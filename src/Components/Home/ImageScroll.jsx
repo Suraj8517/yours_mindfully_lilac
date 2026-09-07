@@ -1,14 +1,17 @@
 import React from "react";
 import img1 from "../../assets/hero/img1.webp"
-import img2 from "../../assets/hero/img2.webp"
+import img2 from "../../assets/hero/img2.jpg"
 import img3 from "../../assets/hero/img3.webp"
-import img4 from "../../assets/hero/img4.webp"
-import img5 from "../../assets/hero/img5.webp"
+import img4 from "../../assets/hero/img4.jpg"
+import img5 from "../../assets/hero/img5.jpg"
+import img6 from "../../assets/hero/img8.jpg"
+
+
 
 const images = [
   {
     src: img1,
-    alt: "group of women",
+    alt: "happy women",
   },
   {
     src: img2,
@@ -26,6 +29,10 @@ const images = [
     src: img5,
     alt: "women meditating",
   },
+  {
+    src: img6,
+    alt: "happy women",
+  }
 ];
 
 export default function InfiniteImageStrip() {

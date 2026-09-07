@@ -1,33 +1,20 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  User,
-  Check,
-  Feather,
-  Users,
-  Award,
-  Sparkles,
-  HeartHandshake,
-  Trophy,
-} from "lucide-react";
-import img from "../../assets/arthi.webp";
+import { useEffect, useState } from "react";
+import img from "../../assets/arthi.png";
 
 // ---------------------------------------------------------------------------
-// A single lilac / lavender family — one deep tone for headings and CTAs,
-// one mid tone for the signature accent moments, one pale tint for fills.
-// Kept intentionally narrow so the section reads as one cohesive palette
-// rather than several competing accent colors.
+// A single lilac family, kept narrow on purpose: one deep plum-lilac for
+// dark fills, one mid lilac for accents and headings, one pale lilac tint
+// worked into the paper itself so the palette carries through the whole
+// section rather than sitting only in one badge or button.
 // ---------------------------------------------------------------------------
 const PALETTE = {
-  cream: "#FCFBF8",     // base background — matches the Services section above it
-  paper: "#F4EEFB",     // pale lavender wash used behind panels
-  ink: "#2E2740",       // near-black plum for headings
-  body: "#5C5568",      // body copy
-  accent: "#7C5FA6",    // primary lilac — headline, icons
-  accentDeep: "#4A3B6B",// deep plum-lilac — labels, dark text on light fills
-  accentSoft: "#9B6FA8",// secondary lavender — borders, secondary emphasis
-  fill: "#EFE7F8",      // pale lilac fill — chips, cards
-  fillDeep: "#E3D6F4",  // slightly deeper lilac fill for the featured card
-  line: "rgba(107,91,149,0.18)",
+  paper: "#F8F5FC", // pale lilac-tinted paper
+  ink: "#2A2438", // deep plum-black
+  body: "#5B5468", // body copy
+  accent: "#7C5FA6", // primary lilac — lead-in, headings, small accents
+  accentDeep: "#372B54", // deep plum-lilac — portrait wash, closing panel
+  accentMuted: "#B9A4D1", // soft lilac — muted text on the dark panel
+  line: "rgba(90,70,120,0.18)", // lilac-tinted hairline rules
 };
 
 const EXPERTISE = [
@@ -40,35 +27,21 @@ const EXPERTISE = [
   "Family & Couple Counselling",
 ];
 
-// The lifetime achievement sits first so it can be pulled out as the
-// featured credential in the bento layout below.
+// The lifetime achievement is called out with slightly heavier weight in
+// the list below, rather than being pulled into a separate card treatment.
 const CREDENTIALS = [
   {
     title: "Lifetime Achievement Award",
     org: "Mental Health Awareness",
-    icon: Trophy,
-    featured: true,
+    lead: true,
   },
-  {
-    title: "Member",
-    org: "Counsellors Council of India (CCI)",
-    icon: Award,
-  },
+  { title: "Member", org: "Counsellors Council of India (CCI)" },
   {
     title: "Associate Counsellor",
     org: "World Mental Health Care Association",
-    icon: HeartHandshake,
   },
-  {
-    title: "Certified Shadow Mastery Coach",
-    org: "",
-    icon: Feather,
-  },
-  {
-    title: "Trained Imago Relationship Therapist",
-    org: "",
-    icon: Sparkles,
-  },
+  { title: "Certified Shadow Mastery Coach", org: "" },
+  { title: "Trained Imago Relationship Therapist", org: "" },
 ];
 
 const IMG_SRC = img;
@@ -80,526 +53,245 @@ function useFonts() {
     link.id = "mt-fonts";
     link.rel = "stylesheet";
     link.href =
-      "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap";
+      "https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600&display=swap";
     document.head.appendChild(link);
   }, []);
 }
 
-function useReveal() {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+// One deliberate, orchestrated entrance for the header and portrait on
+// mount — rather than a fade-and-slide-up triggered on every section as
+// the person scrolls, which is the generic default.
+function useEntrance() {
+  const [ready, setReady] = useState(false);
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.2 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReduced) {
+      setReady(true);
+      return;
+    }
+    const t = setTimeout(() => setReady(true), 60);
+    return () => clearTimeout(t);
   }, []);
-  return [ref, visible];
+  return ready;
 }
 
-function Reveal({ children, delay = 0, className = "" }) {
-  const [ref, visible] = useReveal();
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        transform: visible ? "translateY(0)" : "translateY(18px)",
-        opacity: visible ? 1 : 0,
-        transition: `opacity 0.7s cubic-bezier(.22,.61,.36,1) ${delay}s, transform 0.7s cubic-bezier(.22,.61,.36,1) ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-// Slim gradient rule with a small centered dot — a quieter, more current
-// stand-in for the old wavy divider line.
-function GradientRule({ color = PALETTE.accentSoft, className = "" }) {
-  return (
-    <div className={`flex items-center justify-center gap-2 ${className}`} style={{ width: 120 }}>
-      <span
-        className="h-px flex-1"
-        style={{ background: `linear-gradient(90deg, transparent, ${color})` }}
-      />
-      <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
-      <span
-        className="h-px flex-1"
-        style={{ background: `linear-gradient(90deg, ${color}, transparent)` }}
-      />
-    </div>
-  );
-}
-
-// Soft, blurred gradient shapes sitting behind the content — the
-// "aurora mesh" background treatment, used once for the whole section
-// rather than repeated on every panel.
-function AuroraBackdrop() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      <div
-        className="absolute -top-24 -right-24 h-[26rem] w-[26rem] rounded-full opacity-60"
-        style={{ background: PALETTE.fillDeep, filter: "blur(90px)" }}
-      />
-      <div
-        className="absolute top-1/3 -left-32 h-[22rem] w-[22rem] rounded-full opacity-50"
-        style={{ background: PALETTE.fill, filter: "blur(100px)" }}
-      />
-      <div
-        className="absolute bottom-0 right-1/4 h-[18rem] w-[18rem] rounded-full opacity-40"
-        style={{ background: "#E9DEF7", filter: "blur(80px)" }}
-      />
-    </div>
-  );
-}
-
-function BreathingPortrait() {
-  return (
-    <div className="relative mx-auto w-full max-w-[380px]">
-      {/* gradient ring frame — a single soft-edged lilac halo behind the photo */}
-      <div
-        className="absolute -inset-3 rounded-[2.5rem]"
-        style={{
-          background: `linear-gradient(155deg, ${PALETTE.accentSoft}55, ${PALETTE.fill}00 60%)`,
-        }}
-        aria-hidden="true"
-      />
-
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[2.25rem] mt-4 sm:mt-1 shadow-[0_30px_60px_-30px_rgba(46,39,64,0.35)]">
-        <img
-          src={IMG_SRC}
-          alt="Ms. Arthi Sujai, Psychotherapist"
-          className="h-full w-full object-cover object-top"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(to top, ${PALETTE.ink}66, transparent 55%)`,
-          }}
-        />
-      </div>
-
-      {/* floating stat chip — small bento moment tucked over the top-left corner */}
-      <div
-        className="absolute top-3 left-1 flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-        style={{
-          background: "rgba(255,255,255,0.7)",
-          backdropFilter: "blur(10px)",
-          border: `1px solid rgba(255,255,255,0.6)`,
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'IBM Plex Mono', monospace",
-            color: PALETTE.accentDeep,
-            fontSize: 10.5,
-            letterSpacing: "0.06em",
-            fontWeight: 500,
-          }}
-        >
-          13+ YEARS
-        </span>
-      </div>
-
-      {/* name badge — glass pill floating over the bottom edge */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 px-5 py-3 rounded-full"
-        style={{
-          bottom: "-6%",
-          background: "rgba(252,251,248,0.85)",
-          backdropFilter: "blur(14px)",
-          border: `1px solid ${PALETTE.line}`,
-          boxShadow: "0 20px 40px -22px rgba(46,39,64,0.45)",
-          whiteSpace: "nowrap",
-        }}
-      >
-        <span
-          className="flex h-8 w-8 items-center justify-center rounded-full shrink-0"
-          style={{ background: PALETTE.fill }}
-        >
-          <User size={14} style={{ color: PALETTE.accent }} />
-        </span>
-        <div className="leading-tight">
-          <h3 className="font-semibold" style={{ color: PALETTE.accentDeep }}>
-            Arthi Sujai
-          </h3>
-          <p
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              color: PALETTE.accentSoft,
-              fontSize: 10,
-              letterSpacing: "0.08em",
-            }}
-          >
-            PSYCHOTHERAPIST
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ExpertiseTags() {
-  return (
-    <div>
-      <p
-        style={{
-          fontFamily: "'IBM Plex Mono', monospace",
-          fontSize: 11,
-          letterSpacing: "0.14em",
-          color: PALETTE.accentSoft,
-        }}
-        className="uppercase mb-3"
-      >
-        Expertise
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {EXPERTISE.map((item) => (
-          <span
-            key={item}
-            className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 transition-all duration-300 hover:-translate-y-0.5"
-            style={{
-              fontFamily: "'Jost', sans-serif",
-              fontSize: 12.5,
-              color: PALETTE.ink,
-              background: "#ffffff",
-              border: `1px solid ${PALETTE.line}`,
-              borderRadius: 999,
-            }}
-          >
-            <span
-              className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-colors duration-300"
-              style={{ background: PALETTE.fill }}
-            >
-              <Check size={9} strokeWidth={3} style={{ color: PALETTE.accent }} />
-            </span>
-            {item}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Full-bleed "On record" band, redone as a small bento grid: the
- * lifetime-achievement credential is pulled out as a wide featured card,
- * with the remaining credentials sitting underneath as compact tiles.
- */
-function CredentialsBand() {
-  const featured = CREDENTIALS.find((c) => c.featured);
-  const rest = CREDENTIALS.filter((c) => !c.featured);
-
-  return (
-    <div className="w-full">
-      <div className="max-w-5xl mx-auto px-6 sm:px-10 lg:px-16 py-14 lg:py-16">
-        <p
-          className="uppercase text-center mb-8"
-          style={{
-            fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: 11,
-            letterSpacing: "0.16em",
-            color: PALETTE.accentSoft,
-          }}
-        >
-          Professional Credentials
-        </p>
-
-        {/* featured card */}
-        <Reveal>
-          <div
-            className="flex items-center gap-5 rounded-[1.75rem] px-6 py-6 sm:px-8 sm:py-7 mb-5"
-            style={{
-              background: `linear-gradient(120deg, ${PALETTE.fillDeep}, ${PALETTE.fill})`,
-              border: `1px solid ${PALETTE.line}`,
-            }}
-          >
-            <span
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
-              style={{ background: PALETTE.accentDeep }}
-            >
-              <Trophy size={24} color="#fff" strokeWidth={1.7} />
-            </span>
-            <div>
-              <p
-                style={{
-                  fontFamily: "'Fraunces', serif",
-                  fontSize: 19,
-                  color: PALETTE.ink,
-                  lineHeight: 1.3,
-                }}
-              >
-                {featured.title}
-              </p>
-              <p
-                className="mt-1"
-                style={{
-                  fontFamily: "'Jost', sans-serif",
-                  fontSize: 13,
-                  color: PALETTE.body,
-                }}
-              >
-                {featured.org}
-              </p>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* compact tiles */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
-          {rest.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <Reveal key={item.title} delay={0.05 + i * 0.06}>
-                <div
-                  className="h-full rounded-2xl px-4 py-5 flex flex-col items-center text-center gap-3 transition-all duration-300 hover:-translate-y-1"
-                  style={{
-                    background: "#ffffff",
-                    border: `1px solid ${PALETTE.line}`,
-                  }}
-                >
-                  <span
-                    className="flex h-10 w-10 items-center justify-center rounded-xl"
-                    style={{ background: PALETTE.fill }}
-                  >
-                    <Icon size={18} style={{ color: PALETTE.accent }} strokeWidth={1.8} />
-                  </span>
-                  <div>
-                    <p
-                      style={{
-                        fontFamily: "'Fraunces', serif",
-                        fontSize: 14.5,
-                        color: PALETTE.ink,
-                        lineHeight: 1.35,
-                      }}
-                    >
-                      {item.title}
-                    </p>
-                    {item.org && (
-                      <p
-                        className="mt-1"
-                        style={{
-                          fontFamily: "'Jost', sans-serif",
-                          fontSize: 11.5,
-                          color: PALETTE.body,
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        {item.org}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function MeetYourTherapist() {
+export default function MeetYourTherapist() {
   useFonts();
+  const ready = useEntrance();
+
+  const lead = CREDENTIALS.find((c) => c.lead);
+  const rest = CREDENTIALS.filter((c) => !c.lead);
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ background: PALETTE.cream }} id="therapist">
-      <AuroraBackdrop />
-
-      {/* ---------------- DESKTOP ---------------- */}
-      <div className="relative hidden md:block">
-        <div className="max-w-6xl mx-auto px-10 lg:px-16 pt-24 pb-16 grid grid-cols-12 gap-x-14 items-start">
-          {/* vertical eyebrow rail */}
-          <div className="col-span-1 hidden lg:flex justify-center">
-            <div
-              className="flex items-center gap-3"
-              style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-            >
-              <span
-                style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: 11,
-                  letterSpacing: "0.25em",
-                  color: PALETTE.accentSoft,
-                }}
-              >
-                MEET YOUR THERAPIST
-              </span>
-              <span className="w-px h-14" style={{ background: PALETTE.line }} />
-            </div>
-          </div>
-
-          {/* portrait column */}
-          <div className="col-span-12 lg:col-span-5">
-            <Reveal>
-              <BreathingPortrait />
-            </Reveal>
-          </div>
-
-          {/* content column */}
-          <div className="col-span-12 lg:col-span-6 pt-6 lg:pt-0">
-            <Reveal>
-              <h2
-                style={{
-                  fontFamily: "'Fraunces', serif",
-                  fontStyle: "italic",
-                  fontWeight: 400,
-                  color: PALETTE.accent,
-                  fontSize: "3.6rem",
-                  lineHeight: 1,
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                Ms. Arthi Sujai
-              </h2>
-              <p
-                className="mt-4 uppercase"
-                style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: 11.5,
-                  letterSpacing: "0.16em",
-                  color: PALETTE.accentDeep,
-                }}
-              >
-                Psychotherapist &middot; Counselling Psychologist &middot; Emotional Well-being Coach
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.08}>
-              <p
-                className="mt-7 leading-relaxed"
-                style={{ fontFamily: "'Jost', sans-serif", color: PALETTE.body, fontSize: 15 }}
-              >
-                With over 13 years of experience, Arthi has helped individuals, couples,
-                and families understand emotional patterns, strengthen relationships, and
-                create healthier, more fulfilling lives.
-              </p>
-              <p
-                className="mt-3 leading-relaxed"
-                style={{ fontFamily: "'Jost', sans-serif", color: PALETTE.body, fontSize: 15 }}
-              >
-                Her approach combines evidence-based psychological practices with
-                compassionate guidance to create meaningful and sustainable change.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.14} className="mt-8">
-              <GradientRule />
-            </Reveal>
-
-            <Reveal delay={0.16} className="mt-6">
-              <ExpertiseTags />
-            </Reveal>
-          </div>
-        </div>
-
-        <CredentialsBand />
-
-        <div className="flex flex-col items-center py-20">
-          <GradientRule className="mb-6" />
-          <p
-            className="text-center max-w-md px-6"
-            style={{
-              fontFamily: "'Fraunces', serif",
-              fontStyle: "italic",
-              fontSize: 21,
-              color: PALETTE.accent,
-            }}
-          >
-            Where your mind &amp; heart feel at home.
-          </p>
-        </div>
+    <section id="therapist" className="w-full bg-[#FCFBF8]" >
+      {/* header */}
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 pt-20 sm:pt-24 pb-2">
+        <p
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            color: PALETTE.accent,
+            fontSize: 15,
+            fontWeight: 500,
+            opacity: ready ? 1 : 0,
+            transform: ready ? "translateY(0)" : "translateY(8px)",
+            transition: "opacity 0.7s ease, transform 0.7s ease",
+          }}
+          className="mb-4"
+        >
+          Meet the person guiding your sessions
+        </p>
+        <h2
+          style={{
+            fontFamily: "'Newsreader', serif",
+            color: PALETTE.ink,
+            fontWeight: 500,
+            fontSize: "clamp(2.3rem, 5vw, 3.4rem)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.01em",
+            opacity: ready ? 1 : 0,
+            transform: ready ? "translateY(0)" : "translateY(12px)",
+            transition: "opacity 0.8s ease 0.06s, transform 0.8s ease 0.06s",
+          }}
+        >
+          Arthi Sujai
+        </h2>
+        <p
+          className="mt-3"
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            color: PALETTE.body,
+            fontSize: 15.5,
+            opacity: ready ? 1 : 0,
+            transform: ready ? "translateY(0)" : "translateY(8px)",
+            transition: "opacity 0.8s ease 0.12s, transform 0.8s ease 0.12s",
+          }}
+        >
+          Psychotherapist, counselling psychologist, and emotional well-being coach.
+        </p>
       </div>
 
-      {/* ---------------- MOBILE ---------------- */}
-      <div className="relative md:hidden">
-        <div className="px-6 pt-16 pb-10">
-          <p
-            className="uppercase mb-3"
+      {/* portrait + content — same grid row, so the image column stretches
+          to match the content column's natural height on desktop */}
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 pt-10 pb-16 sm:pb-20 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14 md:items-stretch">
+        <div className="md:col-span-4 flex flex-col">
+          <div
+            className="relative overflow-hidden aspect-[4/5] md:aspect-auto md:flex-1"
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: 10.5,
-              letterSpacing: "0.2em",
-              color: PALETTE.accentSoft,
+              borderRadius: 10,
+              background: PALETTE.accentDeep,
+              opacity: ready ? 1 : 0,
+              transform: ready ? "translateY(0)" : "translateY(16px)",
+              transition: "opacity 0.9s ease 0.16s, transform 0.9s ease 0.16s",
             }}
           >
-            Meet your therapist
-          </p>
-          <h2
-            style={{
-              fontFamily: "'Fraunces', serif",
-              fontStyle: "italic",
-              color: PALETTE.ink,
-              fontSize: "2.6rem",
-              lineHeight: 1,
-            }}
-            className="mb-7"
+            <img
+              src={IMG_SRC}
+              alt="Ms. Arthi Sujai, Psychotherapist"
+              className="w-full h-full object-cover object-top"
+              style={{ filter: "grayscale(0.15) contrast(1.02)" }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(180deg, transparent 55%, ${PALETTE.accentDeep}77)`,
+              }}
+              aria-hidden="true"
+            />
+          </div>
+          <div
+            className="flex items-center gap-3 mt-4"
+            style={{ fontFamily: "'Inter', sans-serif", fontSize: 13 }}
           >
-            Ms. Arthi Sujai
-          </h2>
+            <span style={{ color: PALETTE.ink, fontWeight: 500 }}>Arthi Sujai</span>
+            <span
+              style={{ width: 1, height: 12, background: PALETTE.accent, opacity: 0.5 }}
+              aria-hidden="true"
+            />
+            <span style={{ color: PALETTE.body }}>13 years in practice</span>
+          </div>
+        </div>
 
-          <BreathingPortrait />
-
+        <div className="md:col-span-8 flex flex-col">
           <p
-            className="uppercase mt-16 mb-4"
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: 11,
-              letterSpacing: "0.14em",
-              color: PALETTE.accentDeep,
+              fontFamily: "'Inter', sans-serif",
+              color: PALETTE.body,
+              fontSize: 15.5,
+              lineHeight: 1.75,
+              maxWidth: "82ch",
             }}
-          >
-            Psychotherapist &middot; Emotional Well-being Coach
-          </p>
-          <p
-            className="leading-relaxed"
-            style={{ fontFamily: "'Jost', sans-serif", color: PALETTE.body, fontSize: 14.5 }}
           >
             With over 13 years of experience, Arthi has helped individuals, couples, and
-            families understand emotional patterns, strengthen relationships, and create
-            healthier, more fulfilling lives.
-          </p>
-          <p
-            className="leading-relaxed mt-3"
-            style={{ fontFamily: "'Jost', sans-serif", color: PALETTE.body, fontSize: 14.5 }}
-          >
-            Her approach combines evidence-based psychological practices with compassionate
-            guidance to create meaningful and sustainable change.
+            families understand emotional patterns, strengthen relationships, and build
+            healthier, more fulfilling lives. Her approach combines evidence-based
+            psychological practice with compassionate guidance, aimed at change that
+            actually holds.
           </p>
 
-          <GradientRule className="my-7" />
+          {/* credentials — a plain resume-style list, not icon cards,
+              with a lilac rule marking the standout credential */}
+          <div className="mt-10">
+            <h3
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                color: PALETTE.accent,
+                fontWeight: 600,
+                fontSize: 13.5,
+              }}
+              className="mb-1"
+            >
+              Credentials
+            </h3>
+            <div style={{ borderTop: `1px solid ${PALETTE.accent}` }}>
+              <div
+                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3"
+                style={{ borderBottom: `1px solid ${PALETTE.line}` }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Newsreader', serif",
+                    fontWeight: 500,
+                    fontSize: 16.5,
+                    color: PALETTE.ink,
+                  }}
+                >
+                  {lead.title}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 13,
+                    color: PALETTE.accent,
+                  }}
+                >
+                  {lead.org}
+                </span>
+              </div>
+              {rest.map((c) => (
+                <div
+                  key={c.title}
+                  className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3"
+                  style={{ borderBottom: `1px solid ${PALETTE.line}` }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'Newsreader', serif",
+                      fontSize: 15.5,
+                      color: PALETTE.ink,
+                    }}
+                  >
+                    {c.title}
+                  </span>
+                  {c.org && (
+                    <span
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: 13,
+                        color: PALETTE.body,
+                      }}
+                    >
+                      {c.org}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-          <ExpertiseTags />
-        </div>
+          {/* expertise — flowing prose, not pill chips */}
+          <div className="mt-10">
+            <h3
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                color: PALETTE.accent,
+                fontWeight: 600,
+                fontSize: 13.5,
+              }}
+              className="mb-2"
+            >
+              Areas of focus
+            </h3>
+            <p
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                color: PALETTE.body,
+                fontSize: 15,
+                lineHeight: 1.8,
+                maxWidth: "62ch",
+              }}
+            >
+              {EXPERTISE.join(", ")}.
+            </p>
+          </div>
 
-        {/* full-bleed credentials band, directly under the image */}
-        <CredentialsBand />
-
-        <div className="flex flex-col items-center pt-14 pb-16 px-6">
-          <GradientRule className="mb-6" />
-          <p
-            className="text-center"
-            style={{
-              fontFamily: "'Fraunces', serif",
-              fontStyle: "italic",
-              fontSize: 18,
-              color: PALETTE.accent,
-            }}
-          >
-            Where your mind &amp; heart feel at home.
-          </p>
+          {/* spacer keeps the flex column from collapsing shorter than
+              the image on tall viewports without forcing artificial gaps */}
+          <div className="flex-1" />
         </div>
       </div>
+
     </section>
   );
 }
