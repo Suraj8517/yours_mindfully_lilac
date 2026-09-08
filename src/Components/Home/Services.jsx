@@ -8,6 +8,7 @@ import {
   Video,
   UsersRound,
   ArrowRight,
+  Download,
 } from "lucide-react";
 
 import clarity from "../../assets/services/clarity.webp";
@@ -23,6 +24,44 @@ import webinars from "../../assets/services/webinars.webp";
 // offers a callback option, so it only needs to change in one place.
 // ---------------------------------------------------------------------------
 const CALLBACK_FORM_LINK = "#request-a-callback";
+
+// ---------------------------------------------------------------------------
+// Brochure downloads
+// ---------------------------------------------------------------------------
+// Put the actual PDF files in your app's static/public folder, e.g.:
+//   public/brochures/personal-growth-and-healing.pdf
+//   public/brochures/relationship-wellness.pdf
+//   ...
+// The paths below assume a Vite/CRA-style `public/` folder served from `/`.
+// If you're using Next.js, the same rule applies — files in `public/brochures/`
+// are reachable at `/brochures/...`.
+//
+// Each entry needs:
+//   - href:     the path/URL to the PDF
+//   - fileName: the filename the browser will save it as (via the `download`
+//               attribute) — this works for same-origin files. If a PDF is
+//               hosted on a different origin (e.g. a CDN), most browsers will
+//               ignore `download` and just open it in a new tab instead; in
+//               that case proxy it through your own domain if you need a
+//               forced download.
+const BROCHURES = {
+  "personal-growth": {
+    href: "/brochures/personal-growth-and-healing.pdf",
+    fileName: "Personal-Growth-and-Healing-Brochure.pdf",
+  },
+  "relationship-wellness": {
+    href: "/brochures/relationship-wellness.pdf",
+    fileName: "Relationship-Wellness-Brochure.pdf",
+  },
+  "emotional-wellness": {
+    href: "/brochures/emotional-wellness-programs.pdf",
+    fileName: "Emotional-Wellness-Programs-Brochure.pdf",
+  },
+  "journey-to-yourself": {
+    href: "/brochures/journey-to-yourself.pdf",
+    fileName: "Journey-to-Yourself-Brochure.pdf",
+  },
+};
 
 // Flat, muted accent per track — used sparingly (one small badge, one rule)
 // rather than washed across the whole card. Each track also carries a photo
@@ -53,7 +92,11 @@ const VALUES = [
     accent: "#8E7CC3",
     image: growth,
     ctas: [
-      { label: "View Brochure", href: "#brochure-personal-growth", primary: true },
+      {
+        label: "Download Brochure",
+        primary: true,
+        download: BROCHURES["personal-growth"],
+      },
       { label: "Request a Callback", href: CALLBACK_FORM_LINK },
     ],
   },
@@ -67,7 +110,11 @@ const VALUES = [
     accent: "#9B6FA8",
     image: relation,
     ctas: [
-      { label: "View Brochure", href: "#brochure-relationship-wellness", primary: true },
+      {
+        label: "Download Brochure",
+        primary: true,
+        download: BROCHURES["relationship-wellness"],
+      },
       { label: "Request a Callback", href: CALLBACK_FORM_LINK },
     ],
   },
@@ -81,7 +128,11 @@ const VALUES = [
     accent: "#A084C4",
     image: emotional,
     ctas: [
-      { label: "View Brochure", href: "#brochure-emotional-wellness", primary: true },
+      {
+        label: "Download Brochure",
+        primary: true,
+        download: BROCHURES["emotional-wellness"],
+      },
       { label: "Request a Callback", href: CALLBACK_FORM_LINK },
     ],
   },
@@ -95,7 +146,11 @@ const VALUES = [
     accent: "#7C5FA6",
     image: journey,
     ctas: [
-      { label: "View Brochure", href: "#brochure-journey-to-yourself", primary: true },
+      {
+        label: "Download Brochure",
+        primary: true,
+        download: BROCHURES["journey-to-yourself"],
+      },
       { label: "Request a Callback", href: CALLBACK_FORM_LINK },
     ],
   },
@@ -127,10 +182,20 @@ const VALUES = [
   },
 ];
 
-function CTAButton({ label, href, primary }) {
+// `download` (optional) = { href, fileName } for a brochure-style CTA.
+// When present, it wins over `href`/`label` icon — the anchor gets a real
+// `download` attribute so the browser saves the file instead of navigating.
+function CTAButton({ label, href, primary, download }) {
+  const isDownload = Boolean(download);
+
   return (
     <a
-      href={href || "#"}
+      href={isDownload ? download.href : href || "#"}
+      // The `download` attribute is what actually triggers a save-to-disk
+      // instead of a normal navigation, for same-origin files. Giving it a
+      // value sets the suggested filename.
+      download={isDownload ? download.fileName : undefined}
+      target={isDownload ? undefined : undefined}
       className={`group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[0.68rem] font-medium transition-opacity duration-200 sm:px-5 sm:py-2.5 sm:text-[0.82rem] no-underline ${
         primary
           ? "bg-[#4A3B6B] text-white hover:opacity-85 active:opacity-70"
@@ -138,11 +203,19 @@ function CTAButton({ label, href, primary }) {
       }`}
     >
       {label}
-      <ArrowRight
-        size={13}
-        strokeWidth={2}
-        className="transition-transform duration-200 group-hover:translate-x-0.5"
-      />
+      {isDownload ? (
+        <Download
+          size={13}
+          strokeWidth={2}
+          className="transition-transform duration-200 group-hover:translate-y-0.5"
+        />
+      ) : (
+        <ArrowRight
+          size={13}
+          strokeWidth={2}
+          className="transition-transform duration-200 group-hover:translate-x-0.5"
+        />
+      )}
     </a>
   );
 }
@@ -364,7 +437,13 @@ export default function StackingValues() {
 
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-2 border-t border-black/[0.06] mt-1">
                     {value.ctas.map((cta) => (
-                      <CTAButton key={cta.label} label={cta.label} href={cta.href} primary={cta.primary} />
+                      <CTAButton
+                        key={cta.label}
+                        label={cta.label}
+                        href={cta.href}
+                        primary={cta.primary}
+                        download={cta.download}
+                      />
                     ))}
                   </div>
                 </div>
