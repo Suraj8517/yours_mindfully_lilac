@@ -15,6 +15,7 @@ import Footer from '../Components/Home/footer'
 import CTASection from '../Components/Home/ctaSection'
 import PillarsNew from '../Components/Home/PillarsNew'
 import TestimonialSection from '../Components/Home/TestimonialSection'
+import SuccessStories from '../Components/Home/SuccessStories'
 
 export default function Home
 () {
@@ -29,6 +30,7 @@ export default function Home
   <Services/>
   <HowToWorkWithUs/>
   <MeetYourTherapist/>
+  <SuccessStories/>
   <TestimonialSection/>
     <FaqSection />
     <CTASection/>

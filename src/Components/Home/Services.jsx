@@ -31,7 +31,7 @@ const CALLBACK_FORM_LINK = "#request-a-callback";
 // Put the actual PDF files in your app's static/public folder, e.g.:
 //   public/brochures/personal-growth-and-healing.pdf
 //   public/brochures/relationship-wellness.pdf
-//   ...
+//   public/brochures/relationship-renewal.pdf
 // The paths below assume a Vite/CRA-style `public/` folder served from `/`.
 // If you're using Next.js, the same rule applies — files in `public/brochures/`
 // are reachable at `/brochures/...`.
@@ -53,20 +53,12 @@ const BROCHURES = {
     href: "/brochures/relationship-wellness.pdf",
     fileName: "Relationship-Wellness-Brochure.pdf",
   },
-  "emotional-wellness": {
-    href: "/brochures/emotional-wellness-programs.pdf",
-    fileName: "Emotional-Wellness-Programs-Brochure.pdf",
-  },
-  "journey-to-yourself": {
-    href: "/brochures/journey-to-yourself.pdf",
-    fileName: "Journey-to-Yourself-Brochure.pdf",
+  "relationship-renewal": {
+    href: "/brochures/relationship renewal.pdf",
+    fileName: "Relationship-Renewal-Brochure.pdf",
   },
 };
 
-// Flat, muted accent per track — used sparingly (one small badge, one rule)
-// rather than washed across the whole card. Each track also carries a photo
-// for its panel; a soft accent-tinted wash sits over the image so the color
-// identity still reads at a glance.
 const VALUES = [
   {
     format: "1:1 Session",
@@ -111,11 +103,15 @@ const VALUES = [
     image: relation,
     ctas: [
       {
-        label: "Download Brochure",
+        label: "For Unmarried",
         primary: true,
         download: BROCHURES["relationship-wellness"],
       },
-      { label: "Request a Callback", href: CALLBACK_FORM_LINK },
+      {
+        label: "For Married",
+        primary: true,
+        download: BROCHURES["relationship-renewal"],
+      },
     ],
   },
   {
@@ -128,12 +124,7 @@ const VALUES = [
     accent: "#A084C4",
     image: emotional,
     ctas: [
-      {
-        label: "Download Brochure",
-        primary: true,
-        download: BROCHURES["emotional-wellness"],
-      },
-      { label: "Request a Callback", href: CALLBACK_FORM_LINK },
+      { label: "Request a Callback", href: CALLBACK_FORM_LINK, primary: true },
     ],
   },
   {
@@ -146,12 +137,7 @@ const VALUES = [
     accent: "#7C5FA6",
     image: journey,
     ctas: [
-      {
-        label: "Download Brochure",
-        primary: true,
-        download: BROCHURES["journey-to-yourself"],
-      },
-      { label: "Request a Callback", href: CALLBACK_FORM_LINK },
+      { label: "Request a Callback", href: CALLBACK_FORM_LINK, primary: true },
     ],
   },
   {
@@ -182,20 +168,14 @@ const VALUES = [
   },
 ];
 
-// `download` (optional) = { href, fileName } for a brochure-style CTA.
-// When present, it wins over `href`/`label` icon — the anchor gets a real
-// `download` attribute so the browser saves the file instead of navigating.
 function CTAButton({ label, href, primary, download }) {
   const isDownload = Boolean(download);
 
   return (
     <a
       href={isDownload ? download.href : href || "#"}
-      // The `download` attribute is what actually triggers a save-to-disk
-      // instead of a normal navigation, for same-origin files. Giving it a
-      // value sets the suggested filename.
+ 
       download={isDownload ? download.fileName : undefined}
-      target={isDownload ? undefined : undefined}
       className={`group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[0.68rem] font-medium transition-opacity duration-200 sm:px-5 sm:py-2.5 sm:text-[0.82rem] no-underline ${
         primary
           ? "bg-[#4A3B6B] text-white hover:opacity-85 active:opacity-70"
@@ -237,9 +217,6 @@ export default function StackingValues() {
     }
   }, []);
 
-  // Track which content block is centered in the viewport, so the sticky
-  // left-hand title list on desktop can highlight it. Plain
-  // IntersectionObserver — no extra scroll-animation library required.
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
     if (!mq.matches) return;
