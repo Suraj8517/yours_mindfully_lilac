@@ -205,7 +205,7 @@ export default function OurPillars() {
                       }}
                     >
                       {/* Text block */}
-                      <div className="flex flex-col justify-center px-6 py-8 sm:px-10 lg:px-12">
+                      <div className="flex flex-col justify-center px-6 py-8 sm:px-10 lg:px-12 text-center md:text-start">
                         <h3
                           className="font-serif text-2xl leading-tight sm:text-3xl lg:text-4xl"
                           style={{ color: INK }}

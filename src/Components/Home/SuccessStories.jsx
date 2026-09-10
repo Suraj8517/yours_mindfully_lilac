@@ -118,8 +118,7 @@ export default function ScreenshotMarquee() {
           The messages we hold onto
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed" style={{ color: "#6B6470" }}>
-          Unedited, exactly as they reached us — from women who went through
-          the Workshop.
+          Unedited, exactly as they reached us
         </p>
       </div>
 
