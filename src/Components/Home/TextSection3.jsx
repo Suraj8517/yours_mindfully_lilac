@@ -33,7 +33,7 @@ export default function TextSection() {
   return (
     <div
       ref={sectionRef}
-      className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] w-full flex justify-center items-center bg-[#FCFBF8] overflow-hidden px-6 py-16 sm:px-8 md:px-12 md:py-0"
+      className="relative min-h-[40vh] sm:min-h-[70vh] md:min-h-[80vh] w-full flex justify-center items-center bg-[#FCFBF8] overflow-hidden px-6 py-16 sm:px-8 md:px-12 md:py-0"
     >
       <img
         src={leafImg}

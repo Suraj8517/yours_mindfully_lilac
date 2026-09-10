@@ -4,10 +4,10 @@ import img1 from "../../assets/img1.png"
 
 export default function DetailedSection() {
   return (
-    <section className="w-full bg-[#FCFBF8] px-6 py-16 sm:px-10 sm:py-20 md:py-24 lg:px-14 lg:py-28 xl:px-20 xl:py-18 2xl:px-28">
+    <section className="w-full bg-[#FCFBF8] px-6 py-4 sm:px-10 sm:py-20 md:py-24 lg:px-14 lg:py-28 xl:px-20 xl:py-18 2xl:px-28">
       <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-16 lg:flex-row lg:items-center lg:gap-12 xl:gap-20 2xl:gap-28">
         {/* ---------- Image collage ---------- */}
-        <div className="relative w-full max-w-[420px] sm:max-w-[480px] lg:max-w-none lg:flex-1 lg:py-10 lg:pl-10 xl:py-14 xl:pl-14">
+        <div className="relative w-full max-w-[420px] sm:max-w-[480px] lg:max-w-none lg:flex-1 py-2 lg:py-10 lg:pl-10 xl:py-14 xl:pl-14">
           {/* Main image */}
           <img src={img1}
             label="Studio space"

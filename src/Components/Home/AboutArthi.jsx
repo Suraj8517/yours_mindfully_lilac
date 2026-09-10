@@ -190,8 +190,13 @@ export default function MeetYourTherapist() {
             actually holds.
           </p>
 
-          {/* credentials — a plain resume-style list, not icon cards,
-              with a lilac rule marking the standout credential */}
+          {/* credentials — lifted onto a soft lilac-tinted panel so the
+              section reads as a distinct "credentials" block rather than
+              plain body copy, with a filled accent rule down the left
+              edge of each row instead of a bottom hairline. The lead
+              credential gets a small tag rather than relying on weight
+              alone to stand out. On narrow screens the title/org pair
+              stacks vertically instead of a justified row. */}
           <div className="mt-10">
             <h3
               style={{
@@ -200,46 +205,67 @@ export default function MeetYourTherapist() {
                 fontWeight: 600,
                 fontSize: 13.5,
               }}
-              className="mb-1"
+              className="mb-3"
             >
               Credentials
             </h3>
-            <div style={{ borderTop: `1px solid ${PALETTE.accent}` }}>
+            <div
+              style={{
+                background: PALETTE.paper,
+                borderRadius: 10,
+                border: `1px solid ${PALETTE.line}`,
+                overflow: "hidden",
+              }}
+            >
               <div
-                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3"
-                style={{ borderBottom: `1px solid ${PALETTE.line}` }}
+                className="flex flex-col gap-y-1.5 py-4 px-5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4"
+                style={{
+                  borderLeft: `3px solid ${PALETTE.accent}`,
+                  borderBottom: `1px solid ${PALETTE.line}`,
+                  background: `${PALETTE.accent}0F`,
+                }}
               >
-                <span
-                  style={{
-                    fontFamily: "'Newsreader', serif",
-                    fontWeight: 500,
-                    fontSize: 16.5,
-                    color: PALETTE.ink,
-                  }}
-                >
-                  {lead.title}
-                </span>
+                <div className="flex items-center gap-2.5">
+                  <span
+                    style={{
+                      fontFamily: "'Newsreader', serif",
+                      fontWeight: 500,
+                      fontSize: 16.5,
+                      color: PALETTE.ink,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {lead.title}
+                  </span>
+                  
+                </div>
                 <span
                   style={{
                     fontFamily: "'Inter', sans-serif",
                     fontSize: 13,
                     color: PALETTE.accent,
+                    fontWeight: 500,
                   }}
                 >
                   {lead.org}
                 </span>
               </div>
-              {rest.map((c) => (
+              {rest.map((c, i) => (
                 <div
                   key={c.title}
-                  className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3"
-                  style={{ borderBottom: `1px solid ${PALETTE.line}` }}
+                  className="flex flex-col gap-y-0.5 py-3.5 px-5 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-x-4"
+                  style={{
+                    borderLeft: `3px solid ${PALETTE.line}`,
+                    borderBottom:
+                      i === rest.length - 1 ? "none" : `1px solid ${PALETTE.line}`,
+                  }}
                 >
                   <span
                     style={{
                       fontFamily: "'Newsreader', serif",
                       fontSize: 15.5,
                       color: PALETTE.ink,
+                      lineHeight: 1.3,
                     }}
                   >
                     {c.title}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import img1 from "../../assets/hero/img1.webp"
@@ -42,7 +42,7 @@ gsap.registerPlugin(ScrollTrigger);
  *     compositor layer instead of occasionally repainting
  *   - ScrollTrigger.config to ignore mobile toolbar resize churn
  *
- * --- Image-swap changes (this version) ---
+ * --- Image-swap changes ---
  *   - No more crossfade: images now hard-cut (instant visibility
  *     swap via gsap.set, zero-duration) instead of tweening
  *     autoAlpha over `switchSpeed`.
@@ -51,6 +51,16 @@ gsap.registerPlugin(ScrollTrigger);
  *     cycle on a short fixed interval (IMAGE_SWITCH_INTERVAL) so
  *     they flip multiple times while the slot is on screen,
  *     rather than once per image.
+ *
+ * --- Mobile fix (this version) ---
+ * Same 5 slots, same `xPct` positions, same rotation, same
+ * scroll length, same animation on every screen size — nothing
+ * about the layout logic changes between mobile and desktop.
+ * The only mobile-specific thing is a modest width reduction
+ * (MOBILE_WIDTH_SCALE) so cards aren't quite as large on a phone
+ * screen. `overflow-x-hidden` on the section is the backstop for
+ * anything that still runs past the edge, so cards are never
+ * shrunk down aggressively just to avoid overflow.
  */
 
 // Title sits at z-20 (see JSX below). Anything above 20 renders
@@ -63,58 +73,45 @@ const Z_BACK = 10;
 // Smaller = images change more often. Tune this to taste.
 const IMAGE_SWITCH_INTERVAL = 0.035;
 
+// Cards are this fraction of their desktop px width on mobile —
+// a small trim, not a rebuild. Positioning (xPct) is untouched.
+const MOBILE_WIDTH_SCALE = 0.82;
+
 const slots = [
   {
     side: "left",
     xPct: 24,
     width: 320,
     layer: "back", // sits BEHIND the title
-    images: [
-      img1,
-      img2,
-      img3,
-    ],
+    images: [img1, img2, img3],
   },
   {
     side: "left",
     xPct: 6,
     width: 380,
     layer: "front", // sits OVER the title
-    images: [
-      img4,
-      img5,
-    ],
+    images: [img4, img5],
   },
   {
     side: "right",
     xPct: 62,
     width: 340,
     layer: "front",
-    images: [
-      img6,
-      img1,
-      img2,
-    ],
+    images: [img6, img1, img2],
   },
   {
     side: "right",
     xPct: 48,
     width: 400,
     layer: "back",
-    images: [
-      img3,
-      img4,
-    ],
+    images: [img3, img4],
   },
   {
     side: "left",
     xPct: 2,
     width: 360,
     layer: "front",
-    images: [
-      img6,
-      img1,
-    ],
+    images: [img6, img1],
   },
 ];
 
@@ -125,6 +122,13 @@ export default function TestimonialSection() {
   const pinRef = useRef(null);
   const slotRefs = useRef([]);
   const imgRefs = useRef([]);
+
+  // Computed once on mount, matching the existing
+  // ignoreMobileResize stance — this isn't meant to track live
+  // viewport changes, just pick the right width at load.
+  const [isMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 768
+  );
 
   useEffect(() => {
     ScrollTrigger.config({ ignoreMobileResize: true });
@@ -164,7 +168,10 @@ export default function TestimonialSection() {
         const start = i * slotDuration;
         const span = slotDuration + overlap;
 
-        // --- 1. Slot rises bottom -> top ---
+        // --- 1. Slot rises bottom -> top, all the way out of the
+        // viewport (yPercent -160), so by the time a slot's window
+        // ends it's fully hidden above the fold, not parked
+        // mid-screen. ---
         // Uses .to() (not .fromTo()) since the "from" state was
         // already committed by gsap.set() above.
         tl.to(
@@ -210,7 +217,7 @@ export default function TestimonialSection() {
       // --- Re-measure once fonts and images have actually loaded ---
       // ScrollTrigger's initial pin start/end is calculated on the
       // layout as it exists at mount time. The clamp()-sized
-      // heading and the Unsplash images both change the section's
+      // heading and the images both change the section's
       // rendered height slightly once they finish loading, so we
       // force one clean refresh after both are ready.
       const refresh = () => ScrollTrigger.refresh();
@@ -257,7 +264,7 @@ export default function TestimonialSection() {
   return (
     <section
       ref={rootRef}
-      className="relative bg-[#fcfbf8] text-[#4A3F5A]"
+      className="relative bg-[#fcfbf8] text-[#4A3F5A] overflow-x-hidden"
       style={{ height: "600vh" }}
     >
       <div ref={pinRef} className="relative h-screen w-full overflow-hidden">
@@ -284,7 +291,7 @@ export default function TestimonialSection() {
             className="absolute bottom-[6%] rounded-sm overflow-hidden shadow-xl"
             style={{
               left: `${slot.xPct}%`,
-              width: `${slot.width}px`,
+              width: `${isMobile ? Math.round(slot.width * MOBILE_WIDTH_SCALE) : slot.width}px`,
               aspectRatio: "3 / 4",
               willChange: "transform",
             }}
