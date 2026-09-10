@@ -66,7 +66,7 @@ export default function HowToWorkWithUs() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[80vh] sm:min-h-screen w-full overflow-hidden bg-[#2b241d]"
+      className="relative min-h-[90vh] sm:min-h-screen w-full overflow-hidden bg-[#2b241d]"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Textured material backdrop */}
