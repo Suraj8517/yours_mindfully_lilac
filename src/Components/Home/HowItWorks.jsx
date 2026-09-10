@@ -94,7 +94,7 @@ export default function HowToWorkWithUs() {
         <div className="absolute inset-0 bg-black/25" />
       </div>
 
-      <div className="relative mx-auto flex min-h-[70vh] sm:min-h-screen w-full max-w-[90rem] flex-col justify-end px-6 py-14 sm:px-14 sm:py-20 2xl:px-20 2xl:py-24">
+      <div className="relative mx-auto flex min-h-[80vh] sm:min-h-screen w-full max-w-[90rem] flex-col justify-end px-6 py-14 sm:px-14 sm:py-20 2xl:px-20 2xl:py-24">
   
         <h1
           className={`absolute left-6 top-14 max-w-2xl text-7xl leading-[.8rem] text-[#F6EFE4] transition-all duration-700 ease-out sm:left-17 sm:top-25 2xl:left-20 2xl:top-44 2xl:text-[7.2rem] ${
@@ -106,7 +106,7 @@ export default function HowToWorkWithUs() {
         </h1>
 
         {/* Four columns */}
-        <div className="grid grid-cols-2 gap-8 sm:mb-6 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-10 lg:mb-10 lg:grid-cols-4 lg:gap-x-0 align-bottom">
+        <div className="grid grid-cols-2 gap-8 sm:mb-6 sm:grid-cols-2  sm:gap-x-10 sm:gap-y-10 lg:mb-10 lg:grid-cols-4 lg:gap-x-0 align-bottom">
           {COLUMNS.map((col, i) => (
             <div
               key={col.heading}
