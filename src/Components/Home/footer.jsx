@@ -52,12 +52,14 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-[linear-gradient(180deg,#FCFBF8_0%,#F1EAF9_25%,#E4D6F0_50%,#D6C2E8_75%,#C8AEDF_100%)] text-[#3A2E4A]">
-      <div className="mx-auto max-w-6xl px-6 pb-14 pt-16 sm:px-10 lg:px-12">
+    <footer className="relative overflow-x-hidden bg-[linear-gradient(180deg,#FCFBF8_0%,#F1EAF9_25%,#E4D6F0_50%,#D6C2E8_75%,#C8AEDF_100%)] text-[#3A2E4A]">
+      <div className="mx-auto max-w-6xl px-6 pb-24 sm:pt-16 sm:px-10 sm:pb-14 lg:px-12">
         {/* top row: contact/social — logo — quick links */}
-        <div className="grid grid-cols-1 items-center gap-14 md:grid-cols-3">
-          {/* Left: email + social */}
-          <div className="order-2 md:order-1">
+        <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-3 md:gap-14">
+          {/* Left: email + social — centered on mobile to sit balanced
+              under the centered logo, left-aligned again once the
+              3-column row has room at md */}
+          <div className="order-2 flex flex-col items-center md:order-1 md:items-start">
             <div className="flex items-center gap-2.5">
               <a
                 href={`mailto:${email}`}
@@ -98,7 +100,7 @@ export default function Footer() {
             <img
               src={logo}
               alt="Mindfully You logo"
-              className="h-24 w-auto object-contain sm:h-28"
+              className="h-20 w-auto object-contain sm:h-24 md:h-28"
             />
           </div>
 
@@ -122,7 +124,7 @@ export default function Footer() {
         </div>
 
         {/* credit row */}
-        <div className="mt-16 border-t border-[#D6C2E8] pt-6 text-center">
+        <div className="mt-14 border-t border-[#D6C2E8] pt-6 text-center sm:mt-16">
           <p className="text-xs text-[#7A6B8C]">
             © {new Date().getFullYear()} Mindfully You. All rights reserved.
           </p>
@@ -144,12 +146,14 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* back to top */}
+      {/* back to top — a touch smaller and closer to the corner on
+          mobile, with the extra bottom padding above (pb-24) giving it
+          clear space so it doesn't sit on top of the tag list */}
       <button
         type="button"
         onClick={scrollToTop}
         aria-label="Back to top"
-        className="absolute bottom-8 right-6 flex h-11 w-11 items-center justify-center rounded-full bg-[#3A2E4A] text-[#FBF8F1] shadow-md transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5FA8] sm:right-10 lg:right-12"
+        className="absolute bottom-5 right-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#3A2E4A] text-[#FBF8F1] shadow-md transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5FA8] sm:bottom-8 sm:right-10 sm:h-11 sm:w-11 lg:right-12"
       >
         <ArrowUp className="h-4 w-4" strokeWidth={2} />
       </button>
