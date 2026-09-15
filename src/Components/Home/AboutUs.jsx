@@ -2,7 +2,7 @@ import React from 'react'
 import yourWellnessImage from "../../assets/aboutus.jpg"
 export default function AboutUs() {
   return (
-    <section className="relative h-[70vh] lg:h-[130vh] 2xl:[100vh] w-full overflow-hidden p-4 sm:p-6 lg:p-8" id='about-us'>
+    <section className="relative h-[70vh] lg:h-[130vh] 2xl:[100vh] w-full overflow-hidden p-4 sm:p-6 lg:p-8" >
       {/* Rounded frame — relative + overflow-hidden here is what makes the
           rounded-3xl corners actually clip the image/overlay/content inside it. */}
       <div className="relative h-full w-full overflow-hidden rounded-3xl">

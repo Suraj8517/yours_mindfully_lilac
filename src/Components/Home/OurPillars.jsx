@@ -106,7 +106,7 @@ export default function OurPillars() {
     <section
       ref={wrapperRef}
       className="relative"
-      style={{ height: `${wrapperHeightVh}vh` }}
+      style={{ height: `${wrapperHeightVh}vh` }} id='about-us'
     >
       <h2 className="text-center pb-12 text-5xl">WHY CHOOSE MINDFULLY YOU </h2>
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#FCFBF8]">

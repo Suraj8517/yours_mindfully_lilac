@@ -5,7 +5,6 @@ const quickLinks = [
   { label: "Therapist", href: "#therapist" },
   { label: "About", href: "#about-us" },
   { label: "Services", href: "#services" },
-  { label: "Programs", href: "#programs" },
 ];
 
 const tags = ["Emotional Wellness", "Self-Awareness", "Healing", "Relationships", "Personal Growth"];

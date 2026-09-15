@@ -7,15 +7,60 @@ import img3 from "../../assets/success-stories/Media (3).jpg"
 import img4 from "../../assets/success-stories/Media (4).jpg"
 import img5 from "../../assets/success-stories/Media (5).jpg"
 
-
-
-const people = [
-  { name: "Dipti", tag: "Daily check-ins", src: img1 },
-  { name: "Pallavi", tag: "Emotional regulation", src: img2 },
-  { name: "Mainu", tag: "Sleep & meditation", src: img3 },
-  { name: "Durga", tag: "EFT tapping", src: img4 },
-  { name: "Sandhya", tag: "Confidence & routine", src: img5 },
+// ---- Image testimonials (screenshots) ----
+const imagePeople = [
+  { type: "image", name: "Dipti", tag: "Daily check-ins", src: img1 },
+  { type: "image", name: "Pallavi", tag: "Emotional regulation", src: img2 },
+  { type: "image", name: "Mainu", tag: "Sleep & meditation", src: img3 },
+  { type: "image", name: "Durga", tag: "EFT tapping", src: img4 },
+  { type: "image", name: "Sandhya", tag: "Confidence & routine", src: img5 },
 ];
+
+
+const textPeople = [
+  {
+    type: "text",
+    name: "Sai Divya",
+    quote:
+      "I truly appreciate the patience, understanding, and warmth you brought into every session. Your guidance made me feel safe, supported, and confident to step outside my comfort zone.",
+  },
+  {
+    type: "text",
+    name: "Anjana Sanjeev",
+    quote: "Thanks a ton!!",
+  },
+  {
+    type: "text",
+    name: "Sneha Priya Vuduthalapally",
+    quote:
+      "Thank you Dr. Arthi for creating a safe space to open up. Your guidance helped me understand myself better and see my marriage more positively.",
+  },
+  {
+    type: "text",
+    name: "Keerthi",
+    quote:
+      "Thank you so much Arthi maam. In a short time, you gave me so much clarity and helped me change my perceptions positively.",
+  },
+  {
+    type: "text",
+    name: "Sherin Joseph",
+    quote:
+      "Thank you for helping me realise that I wasn't weak, but simply suppressing who I truly am. You helped me embrace my 'Version 2' and understand myself better.",
+  },
+];
+
+// Interleave images and text so both rows get a natural mix.
+const interleave = (a, b) => {
+  const out = [];
+  const max = Math.max(a.length, b.length);
+  for (let i = 0; i < max; i++) {
+    if (a[i]) out.push(a[i]);
+    if (b[i]) out.push(b[i]);
+  }
+  return out;
+};
+
+const people = interleave(imagePeople, textPeople);
 
 // Repeat the full set enough times that even a very wide monitor never runs
 // out of cards before the loop point. Bump REPEATS up if you add a wider
@@ -29,34 +74,80 @@ const buildRow = (order) =>
 const rowOneItems = buildRow(people);
 const rowTwoItems = buildRow([...people].reverse());
 
-function Card({ item }) {
+// Shared card shell so image and text testimonials read as one family:
+// same size, same radius, same border/shadow, same name footer.
+function CardShell({ children, footerName }) {
   return (
     <figure
-      className="mx-3 w-[220px] shrink-0 overflow-hidden rounded-2xl border bg-white sm:w-[250px]"
+      className="mx-3 flex w-[220px] shrink-0 flex-col overflow-hidden rounded-2xl border bg-white sm:w-[250px]"
       style={{
         borderColor: "#E4DEE9",
-        boxShadow: "0 20px 45px -30px rgba(36,27,46,0.35)",
+        boxShadow: "0 10px 15px -20px rgba(36,27,46,0.35)",
       }}
     >
-      <div className="h-[280px] w-full overflow-hidden sm:h-[320px]">
-        <img
-          src={item.src}
-          alt={`Feedback message from ${item.name}`}
-          className="h-full w-full object-contain object-center"
-          loading="lazy"
-        />
+      <div className="relative h-[280px] w-full overflow-hidden sm:h-[320px]">
+        {children}
       </div>
       <figcaption
         className="flex items-center justify-between border-t px-4 py-3"
         style={{ borderColor: "#EEE9F2" }}
       >
         <span className="text-sm" style={{ color: "#241B2E", fontWeight: 600 }}>
-          {item.name}
+          {footerName}
         </span>
-     
       </figcaption>
     </figure>
   );
+}
+
+function ImageCard({ item }) {
+  return (
+    <CardShell footerName={item.name}>
+      <img
+        src={item.src}
+        alt={`Feedback message from ${item.name}`}
+        className="h-full w-full object-contain object-center"
+        loading="lazy"
+      />
+    </CardShell>
+  );
+}
+
+function TextCard({ item }) {
+  return (
+    <CardShell footerName={item.name}>
+      <div
+        className="flex h-full w-full flex-col px-5 py-5"
+        style={{ backgroundColor: "#FAF8FB" }}
+      >
+        <span
+          aria-hidden="true"
+          className="leading-none"
+          style={{
+            fontFamily: "'Fraunces', serif",
+            fontSize: "2.75rem",
+            color: "#C9B8E0",
+          }}
+        >
+          &ldquo;
+        </span>
+        <p
+          className="mt-1 flex-1 overflow-hidden text-[13.5px] leading-relaxed sm:text-sm"
+          style={{ color: "#4A4353" }}
+        >
+          {item.quote}
+        </p>
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-10"
+          style={{ background: "linear-gradient(to top, #FAF8FB, transparent)" }}
+        />
+      </div>
+    </CardShell>
+  );
+}
+
+function Card({ item }) {
+  return item.type === "image" ? <ImageCard item={item} /> : <TextCard item={item} />;
 }
 
 export default function ScreenshotMarquee() {
